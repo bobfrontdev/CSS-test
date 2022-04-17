@@ -1,0 +1,334 @@
+/* color:  rgb(0, 75, 250)* dark blue */
+/* color:  rgb(198, 215, 255)* light blue */
+/* color:  rgb(244,244,244)* light gray */
+/* color:  rgb(153,153,153)* warm gray */
+/* units are in rem/em/%/vh,vw  !NOT px */
+
+/* NOTE: 저는 개인적으로 아래와 같은 이유로 rem을 쓰지 않습니다.
+rem의 단점 : 
+1. figma나 제플린에서 rem의 단위로 주지 않는다. 
+2. 해상도마다 다르다면, 어차피 분기를 쳐야되는 부분은 똑같다. 
+3. 계산식이 불편하다. 
+3-1. 기본적으로 body에 font-size 62.5%를 주고 작업해야 하는데 그럴 경우 아무사이즈를 주지 않은 기본 폰트사이즈가 10px이 되고 10px이 default가 아닌이상 모든 폰트에 사이즈를 다 지정해야되는 번거로움
+3-2. rem의 계산식이 일정치 않아서 특정 구간에서 일정비가 달라지는 경우도 있습니다. 
+*/
+
+
+$dark-blue: rgb(0, 75, 250);
+$light-blue: rgb(198, 215, 255);
+$light-gray: rgb(244, 244, 244);
+$warm-gray: rgb(153, 153, 153);
+
+/* 기본 리셋 */
+// NOTE: 어차피 번들러로 minify 될꺼라 minify 해드렸습니다. 
+a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font:inherit;vertical-align:baseline;box-sizing:border-box}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{font-size:62.5%;letter-spacing:-.4px;line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:"";content:none}table{border-collapse:collapse;border-spacing:0}button{border:none}img{max-width:100%}strong{font-weight:600;}
+
+/* 시작 */
+// 프로젝트의 규모 및 설계 방식에 따라 달라지는 공통 css.
+.flex {
+  display: flex
+}
+
+.flex-between {
+  justify-content: space-between
+}
+
+// px to rem 임시 함수
+$breakpoints-mobile : 750;
+@function pxtorem($target) {
+  $result: ();
+  $length: length($target);
+  @for $i from 1 through $length {
+    @if(type-of(nth($target, $i)) == string) {
+      $result: append($result, nth($target, $i));
+    }
+    @else {
+    $result: append($result, nth($target, $i) / 16 + rem);
+    }
+  }
+  @return $result;
+}
+
+@function pxtovw-mo($target) {
+  $vw-content: ($breakpoints-mobile * 0.01) * 1;
+  $result: ();
+  $length: length($target);
+  @for $i from 1 through $length {
+    @if(type-of(nth($target, $i)) == string) {
+      $result: append($result, nth($target, $i));
+    }
+    @else {
+    $result: append($result, nth($target, $i) / $vw-content +vw);
+    }
+  }
+  @return $result;
+}
+
+@mixin pxtovw($value, $size, $flag:'false') {
+  #{$value} : pxtorem($size);
+  @media (max-width: $breakpoints-mobile + 'px') {
+    @if($flag==true) {
+      #{$value}: pxtovw-mo($size) !important;
+    }
+    #{$value} : pxtovw-mo($size);
+  }
+}
+
+.funding-page {
+  max-width: pxtorem(750);
+  margin: 0 auto;
+  @include pxtovw(padding, 134 40 40 40);
+}
+
+header {
+  .title {
+    // font-size: 2rem;
+    @include pxtovw(font-size, 48);
+    font-weight: 700;
+  }
+  .noti {
+    @include pxtovw(width, 56);
+    @include pxtovw(height, 56);
+    background: url("./assets/iconNoti@3x.png") no-repeat center;
+    background-size: contain;
+    cursor: pointer;
+  }
+}
+
+nav {
+  @include pxtovw(margin-top, 16);
+  align-items: center;
+  .tab-item {
+    display: inline-block;
+    @include pxtovw(margin-right, 32);
+    @include pxtovw(font-size, 24);
+    font-weight: 600;
+    color: $warm-gray;
+    cursor: pointer;
+    &:last-child {
+      margin-right: 0;
+    }
+    &.is-select {
+      position: relative;
+      color: black;
+      &:after {
+        position: absolute;
+        left: 0;
+        @include pxtovw(bottom, -12);
+        width: 100%;
+        @include pxtovw(height, 3);
+        background: black;
+        content: "";
+      }
+    }
+  }
+
+  .nav-tag {
+    display: inline-flex;
+    position: relative;
+    @include pxtovw(height, 48);
+    @include pxtovw(padding, 0 8);
+    @include pxtovw(border-radius, 8);
+    background: $light-blue;
+    @include pxtovw(font-size, 16);
+    font-weight: 600;
+    color: black;
+    align-items: center;
+    &:before {
+      position: absolute;
+      @include pxtovw(left, -15);
+      width: 0;
+      height: 0;
+      border-top: pxtorem(10) solid transparent;
+      border-right: pxtorem(19) solid $light-blue;
+      border-bottom: pxtorem(10) solid transparent;
+      content: "";
+    }
+    span {
+      display: inline-block;
+      @include pxtovw(margin-left, 3);
+      color: $dark-blue;
+    }
+  }
+}
+
+section {
+  @include pxtovw(margin-top, 32);
+}
+
+.filter {
+  display: flex;
+  position: relative;
+  width: fit-content;
+  @include pxtovw(min-width, 200);
+  @include pxtovw(height, 60);
+  @include pxtovw(padding-left, 16);
+  border: 1px solid $warm-gray;
+  @include pxtovw(border-radius, 16);
+  @include pxtovw(font-size, 24);
+  align-items: center;
+  cursor: pointer;
+  &:after {
+    // NOTE: 이부분은 아이콘 이미지가 있으면 아이콘으로 씁니다.
+    position: absolute;
+    @include pxtovw(right, 10);
+    @include pxtovw(width, 24);
+    @include pxtovw(height, 24);
+    background: url("./assets/iconNoti.png") no-repeat center;
+    content: "";
+  }
+
+  ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+  }
+}
+
+.order-filter {
+  @include pxtovw(height, 60);
+  @include pxtovw(margin-top, 32);
+  @include pxtovw(font-size, 16);
+  @include pxtovw(gap, 16);
+  // NOTE: bem은 절대 변하지 않을 컴포넌트에만 사용하고 있습니다. 
+  &__item {
+    display: flex;
+    width: 100%;
+    @include pxtovw(border-radius, 16);
+    background: $light-gray;
+    @include pxtovw(font-size, 24);
+    font-weight: 500;
+    line-height: 1;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    &.is-select {
+      background: $dark-blue;
+      color: white;
+      justify-content: space-around;
+      &:after {
+        display: inline-flex;
+        @include pxtovw(width, 20);
+        @include pxtovw(height, 16);
+        background: url("./assets/55@3x.png") no-repeat center;
+        background-size: contain;
+        content: "";
+      }
+    }
+  }
+}
+
+.cardlist {
+  @include pxtovw(margin-top, 32);
+  .card-wrap {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    @include pxtovw(grid-gap, 48 32);
+  }
+
+  .card {
+    @include pxtovw(border-radius, 16);
+    background: white;
+    overflow: hidden;
+    box-shadow: 0 6px 10px 1px $light-gray;
+  }
+
+  .imgwrap {
+    position: relative;
+    @include pxtovw(height, 240);
+    background: $light-gray;
+    overflow: hidden;
+    img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      height: 100%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .textwrap {
+    @include pxtovw(padding, 12 10 20 10);
+  }
+
+  .img-label {
+    position: absolute;
+    @include pxtovw(right, 8);
+    @include pxtovw(bottom, 8);
+    @include pxtovw(padding, 8);
+    @include pxtovw(border-radius, 8);
+    background: $dark-blue;
+    @include pxtovw(font-size, 16);
+    font-weight: 600;
+    color: white;
+  }
+
+  .title {
+    @include pxtovw(font-size, 24);
+    font-weight: 600;
+  }
+
+  p {
+    @include pxtovw(margin-top, 14);
+    @include pxtovw(font-size, 16);
+    span {
+      @include pxtovw(font-size, 22);
+      &:after {
+        display: inline-block;
+        @include pxtovw(margin-left, 4);
+        @include pxtovw(font-size, 21);
+        font-weight: 600;
+
+        content: attr(data-unit);
+      }
+    }
+  }
+
+  .price {
+    @include pxtovw(margin-top, 16);
+    @include pxtovw(font-size, 16);
+    td {
+      @include pxtovw(padding, 4 0);
+      @include pxtovw(padding-left, 6);
+      @include pxtovw(font-size, 18);
+      font-weight: 500;
+      span {
+        &:after {
+          display: inline-block;
+          @include pxtovw(margin-left, 6);
+          @include pxtovw(font-size, 17);
+          font-weight: 600;
+          content: attr(data-unit);
+        }
+      }
+    }
+  }
+
+  .progress-area {
+    @include pxtovw(margin-top, 20);
+    @include pxtovw(font-size, 16);
+    .desc {
+      @include pxtovw(margin-bottom, 6);
+    }
+    span {
+      font-weight: 600;
+    }
+    strong {
+      font-weight: 600;
+      color: $dark-blue;
+    }
+  }
+}
+
+.progress-wrap {
+  @include pxtovw(height, 10);
+  @include pxtovw(border-radius, 8);
+  background: $light-gray;
+  overflow: hidden;
+  .progress {
+    height: 100%;
+    background: $dark-blue;
+  }
+}
