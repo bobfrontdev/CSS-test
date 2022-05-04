@@ -92,6 +92,12 @@ body {
     color: rgb(153, 153, 153);
 }
 
+.funding_type>li.active{
+    color: black;
+    border-bottom: 0.4rem solid;
+    padding-bottom: 1%;
+}
+
 .funding_type>li:not(:last-child) {
     margin-right: 5%;
 }
